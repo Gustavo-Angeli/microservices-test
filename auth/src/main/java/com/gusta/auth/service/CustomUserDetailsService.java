@@ -17,7 +17,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         var user = repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found!"));
 
-        if (user == null) throw new UsernameNotFoundException("User not found!");
         return new CustomUserDetails(user);
     }
 }

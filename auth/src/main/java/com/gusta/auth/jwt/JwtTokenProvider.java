@@ -83,7 +83,10 @@ public class JwtTokenProvider {
         DecodedJWT decodedJWT = decodedToken(jwtToken);
         UserDetails userDetails = this.userDetailsService
                 .loadUserByUsername(decodedJWT.getSubject());
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                userDetails.getUsername(),
+                null,
+                userDetails.getAuthorities());
     }
 
     public String resolveToken(HttpServletRequest req) {
