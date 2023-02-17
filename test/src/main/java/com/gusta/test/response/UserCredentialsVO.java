@@ -5,9 +5,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
-public class User {
-    private Long id;
+public class UserCredentialsVO {
     private String username;
     private String password;
 }

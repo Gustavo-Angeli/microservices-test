@@ -5,9 +5,9 @@ import org.springframework.cloud.openfeign.*;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "auth-microservice", url = "http://localhost:8000")
-public interface UserProxy {
+public interface TokenVOProxy {
 
-    @RequestMapping(value = "/auth/login", method = RequestMethod.GET)
-    public String login(@RequestBody User user);
+    @RequestMapping(value = "/auth/login", method = RequestMethod.POST)
+    public TokenVO login(@RequestBody UserCredentialsVO credentialsVO);
 
 }

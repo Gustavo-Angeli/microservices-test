@@ -16,7 +16,7 @@ public class AuthController {
     AuthServices authServices;
 
     @PostMapping(value = "/login")
-    public ResponseEntity login(@RequestBody AccountCredentialsVO data) {
+    public ResponseEntity login(@RequestBody UserCredentialsVO data) {
         checkIfIsNullOrBlankThrowingEx(data.getUsername(), data.getPassword());
         return ResponseEntity.ok(authServices.login(data));
     }

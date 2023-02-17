@@ -5,7 +5,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class AccountCredentialsVO {
+public class UserCredentialsVO {
     private String username;
     private String password;
 }

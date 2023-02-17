@@ -7,18 +7,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "test/")
-public class SayHelloController {
+public class TestController {
 
     @Autowired
-    private UserProxy proxy;
+    private TokenVOProxy proxy;
 
     @GetMapping(value = "hello")
-    public String hello(@RequestBody User user) {
-        System.out.println(user.getUsername());
+    public TokenVO hello(@RequestBody UserCredentialsVO user) {
+        TokenVO tokenVO = proxy.login(user);
 
         if (proxy.login(user) == null) System.out.println("nao foi");
         System.out.println("foi");
-        return "Hello " + user.getUsername();
+
+        return tokenVO;
     }
 
 }

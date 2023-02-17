@@ -18,7 +18,7 @@ public class AuthServices {
     @Autowired
     private UserRepository repository;
 
-    public TokenVO login(AccountCredentialsVO data) {
+    public TokenVO login(UserCredentialsVO data) {
         try {
             var username = data.getUsername();
             var password = data.getPassword();
