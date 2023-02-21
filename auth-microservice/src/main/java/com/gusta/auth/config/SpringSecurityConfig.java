@@ -40,9 +40,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         "/auth/**/**"
                 ).permitAll()
-            .antMatchers("/users").denyAll()
-            .anyRequest()
-                .authenticated()
+            .anyRequest().denyAll()
             .and()
             .apply(new JwtConfig(tokenProvider));
     }

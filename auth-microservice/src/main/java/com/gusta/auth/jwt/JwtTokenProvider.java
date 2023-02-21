@@ -2,10 +2,13 @@ package com.gusta.auth.jwt;
 
 import com.auth0.jwt.*;
 import com.auth0.jwt.algorithms.*;
+import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.*;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.gusta.auth.exceptions.*;
 import com.gusta.auth.model.vo.*;
 import com.gusta.auth.service.*;
+import com.gusta.auth.utils.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
@@ -76,7 +79,13 @@ public class JwtTokenProvider {
     private DecodedJWT decodedToken(String jwtToken) {
         Algorithm alg = Algorithm.HMAC256(secretKey.getBytes());
         JWTVerifier verifier = JWT.require(alg).build();
-        return verifier.verify(jwtToken);
+        DecodedJWT decodedJWT = null;
+        try {
+            decodedJWT = verifier.verify(jwtToken);
+        } catch (Exception e) {
+            return null;
+        }
+        return decodedJWT;
     }
 
     public Authentication getAuthentication(String jwtToken) {
@@ -98,13 +107,11 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        try {
-            DecodedJWT decodedJWT = decodedToken(token);
-            return !decodedJWT.getExpiresAt().before(new Date());
-        } catch (Exception e) {
-            //ToDo exception
-            throw new IllegalArgumentException("AAA");
-        }
+        DecodedJWT decodedJWT = decodedToken(token);
+
+        if (decodedJWT == null) return false;
+
+        return !decodedJWT.getExpiresAt().before(new Date());
     }
 
 }

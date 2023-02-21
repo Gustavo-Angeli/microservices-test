@@ -35,9 +35,13 @@ public class AuthServices {
     }
 
     public TokenVO refreshToken(String username, String refreshJwt) {
-        var user = repository.findByUsername(username)
+        repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " not found!"));
 
         return tokenProvider.refreshTokenVO(refreshJwt);
+    }
+
+    public boolean validateToken(String jwtToken) {
+        return tokenProvider.validateToken(jwtToken);
     }
 }

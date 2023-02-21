@@ -1,5 +1,6 @@
 package com.gusta.auth.jwt;
 
+import com.auth0.jwt.exceptions.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.context.*;
@@ -9,7 +10,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 
-public class JwtTokenFilter extends GenericFilterBean {
+public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenProvider tokenProvider;
@@ -18,19 +19,17 @@ public class JwtTokenFilter extends GenericFilterBean {
         this.tokenProvider = tokenProvider;
     }
 
+
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-
-        String token = tokenProvider.resolveToken((HttpServletRequest) request);
-
-        if (token != null && tokenProvider.validateToken(token)) {
-            Authentication auth = tokenProvider.getAuthentication(token);
-            if (auth != null) {
-                SecurityContextHolder.getContext().setAuthentication(auth);
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+            String token = tokenProvider.resolveToken(request);
+            if (token != null && tokenProvider.validateToken(token)) {
+                Authentication auth = tokenProvider.getAuthentication(token);
+                if (auth != null) {
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             }
-        }
-
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }

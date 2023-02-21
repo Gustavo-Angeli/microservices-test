@@ -24,10 +24,17 @@ public class AuthController {
     @PutMapping(value = "/refresh/{username}")
     public ResponseEntity refreshToken(
             @PathVariable("username") String username,
-           @RequestHeader("Authorization") String refreshToken
+            @RequestHeader("Authorization") String refreshToken
     ) {
         checkIfIsNullOrBlankThrowingEx(username, refreshToken);
         return ResponseEntity.ok(authServices.refreshToken(username, refreshToken));
+    }
+
+    @GetMapping(value = "/validate-token")
+    public boolean validateToken(
+            @RequestHeader("Authorization") String jwtToken
+    ) {
+        return authServices.validateToken(jwtToken);
     }
 
 }
