@@ -5,10 +5,10 @@ import org.springframework.security.core.*;
 
 import javax.persistence.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "permission")
 public class Permission implements GrantedAuthority {
     @Id

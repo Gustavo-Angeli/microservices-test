@@ -1,47 +1,40 @@
 package com.gusta.auth.config;
 
 import com.gusta.auth.jwt.*;
-import org.springframework.beans.factory.annotation.*;
+import lombok.*;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.config.annotation.web.builders.*;
 import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.config.http.*;
-import org.springframework.security.crypto.bcrypt.*;
-import org.springframework.security.crypto.password.*;
+import org.springframework.security.web.*;
+import org.springframework.security.web.authentication.*;
 
 @Configuration
 @EnableWebSecurity
-public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+@RequiredArgsConstructor
+public class SpringSecurityConfig {
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
-    }
+    private final JwtTokenFilter tokenFilter;
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf()
-                .disable()
-            .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .csrf()
+                    .disable()
+                .authorizeHttpRequests()
+                    .antMatchers("/auth/**")
+                    .permitAll()
+                .anyRequest()
+                    .denyAll()
                 .and()
-            .authorizeRequests()
-                .antMatchers(
-                        "/auth/**"
-                ).permitAll()
-            .anyRequest().denyAll()
-            .and()
-            .apply(new JwtConfig(tokenProvider));
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .authenticationProvider(authenticationProvider)
+                    .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }

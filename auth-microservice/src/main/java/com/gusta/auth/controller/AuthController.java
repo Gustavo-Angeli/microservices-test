@@ -2,18 +2,24 @@ package com.gusta.auth.controller;
 
 import com.gusta.auth.model.vo.*;
 import com.gusta.auth.service.*;
-import org.springframework.beans.factory.annotation.*;
+import lombok.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import static com.gusta.auth.utils.ParamValidation.checkIfIsNullOrBlankThrowingEx;
+import static com.gusta.auth.utils.ParamValidation.*;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    AuthServices authServices;
+    private final AuthServices authServices;
+
+    @PostMapping(value = "/create")
+    public ResponseEntity create(@RequestBody UserCredentialsVO data) {
+        checkIfIsNullOrBlankThrowingEx(data.getUsername(), data.getPassword());
+        return ResponseEntity.ok(authServices.create(data));
+    }
 
     @PostMapping(value = "/login")
     public ResponseEntity login(@RequestBody UserCredentialsVO data) {
@@ -21,20 +27,25 @@ public class AuthController {
         return ResponseEntity.ok(authServices.login(data));
     }
 
-    @PutMapping(value = "/refresh/{username}")
+    @PutMapping(value = "/refresh")
     public ResponseEntity refreshToken(
-            @PathVariable("username") String username,
             @RequestHeader("Authorization") String refreshToken
     ) {
-        checkIfIsNullOrBlankThrowingEx(username, refreshToken);
-        return ResponseEntity.ok(authServices.refreshToken(username, refreshToken));
+        checkIfIsNullOrBlankThrowingEx(refreshToken);
+        return ResponseEntity.ok(authServices.refreshToken(refreshToken));
     }
 
     @GetMapping(value = "/validate-token")
-    public boolean validateToken(
+    public ResponseEntity<Boolean> validateToken(
             @RequestHeader("Authorization") String jwtToken
     ) {
-        return authServices.validateToken(jwtToken);
+        return ResponseEntity.ok(authServices.validateToken(jwtToken));
+    }
+    @GetMapping(value = "/get-subject")
+    public ResponseEntity<String> getSubject(
+            @RequestHeader("Authorization") String jwtToken
+    ) {
+        return ResponseEntity.ok(authServices.getSubject(jwtToken));
     }
 
 }
